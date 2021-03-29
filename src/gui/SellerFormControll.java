@@ -1,9 +1,11 @@
 package gui;
 
 import java.net.URL;
+import java.time.Instant;
 import java.time.LocalDate;
 import java.time.ZoneId;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 import java.util.Map;
 import java.util.ResourceBundle;
@@ -123,6 +125,28 @@ public class SellerFormControll implements Initializable {
 		}
 		seller.setName(txtName.getText());
 
+		if (txtEmail.getText() == null || txtEmail.getText().trim().equals("")) {
+			exception.addError("email", "Field can't to be empty");
+		}
+		seller.setEmail(txtEmail.getText());
+		
+		if(dtBirthDate.getValue() == null) {
+			exception.addError("birthDate", "Field can't to be empty");
+		}
+		else {
+			Instant instant = Instant.from(dtBirthDate.getValue().atStartOfDay(ZoneId.systemDefault()));
+			seller.setBirthDate(Date.from(instant));
+		}
+		
+		
+		if (txtBaseSalary.getText() == null || txtBaseSalary.getText().trim().equals("")) {
+			exception.addError("baseSalary", "Field can't to be empty");
+		}
+		
+		seller.setBaseSalary(Utils.tryParseToDouble(txtBaseSalary.getText()));
+		
+		seller.setDepartment(comboBoxDepartment.getValue());
+		
 		if (exception.getErrors().size() > 0) {
 			throw exception;
 		}
@@ -204,9 +228,11 @@ public class SellerFormControll implements Initializable {
 	private void setErrorMessages(Map<String, String> errors) {
 		Set<String> fields = errors.keySet();
 
-		if (fields.contains("name")) {
-			labelErrorName.setText(errors.get("name"));
-		}
+		labelErrorName.setText(fields.contains("name") ? errors.get("name") : "");
+		labelErrorEmail.setText(fields.contains("email") ? errors.get("email") : "");
+		labelErrorBaseSalary.setText(fields.contains("baseSalary") ? errors.get("baseSalary") : "");
+		labelErrorBirthDate.setText(fields.contains("birthDate") ? errors.get("birthDate") : "");
+		
 	}
 
 }
